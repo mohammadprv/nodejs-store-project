@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const path = require('path');
 const { AllRoutes } = require('./routes/router');
 const morgan = require('morgan');
+const createError = require('http-errors');
 
 module.exports = class Application {
 
@@ -62,18 +63,18 @@ module.exports = class Application {
 
     errorHandler() {
         this.#app.use((req, res, next) => {
-            return res.status(404).json({
-                statusCode: 404,
-                message: "آدرس یا صفحه مورد نظر یافت نشد"
-            })
+            next(createError.NotFound("آدرس یا صفحه مورد نظر یافت نشد"));
         })
 
         this.#app.use((err, req, res, next) => {
-            const statusCode = err.status || 500;
-            const message = err.message || "Internal Server Error";
+            const serverError = createError.InternalServerError();
+            const statusCode = err.status || serverError.status;
+            const message = err.message || serverError.message;
             return res.status(statusCode).json({
-                statusCode,
-                message
+                errors: {
+                    statusCode,
+                    message
+                }
             })
         })
 
