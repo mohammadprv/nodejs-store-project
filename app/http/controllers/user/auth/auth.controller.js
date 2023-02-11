@@ -1,15 +1,15 @@
 const createError = require('http-errors');
 const { UserModel } = require('../../../../model/users');
 const { EXPIRES_IN, USER_ROLE } = require('../../../../utils/constant');
-const { randomNumberGenerator } = require('../../../../utils/functions');
-const { authSchema } = require('../../../validators/user/auth.schema');
+const { randomNumberGenerator, createAccessToken } = require('../../../../utils/functions');
+const { getOtpSchema, checkOtpSchema } = require('../../../validators/user/auth.schema');
 const Controller = require('../../controller');
 
 class UserAuthController extends Controller {
 
-    async login(req, res, next) {
+    async getOTP(req, res, next) {
         try {
-            await authSchema.validateAsync(req.body); //? Validate req.body => phone
+            await getOtpSchema.validateAsync(req.body); //? Validate req.body => phone
 
             const { phone } = req.body;
             const code = randomNumberGenerator();
@@ -29,8 +29,32 @@ class UserAuthController extends Controller {
             
             
         } catch (error) {
-            next(createError.BadRequest(error.message));
+            next(error);
         }
+    }
+
+    async checkOTP(req, res, next) {
+        try {
+            await checkOtpSchema.validateAsync(req.body);
+            const { phone, code } = req.body;
+
+            const user = await UserModel.findOne({ phone });
+            if(!user) throw createError.NotFound("کاربری با این شماره یافت نشد");
+            if(user.otp.code != code) throw createError.Unauthorized("کد وارد شده صحیح نمیباشد");
+            const now = Date.now();
+            if(+user.otp.expiresIn < now) throw createError.Unauthorized("کد وارد شده منقضی شده است");
+    
+            const accessToken = await createAccessToken(user._id);
+            return res.json({
+                data: {
+                    accessToken
+                }
+            })
+
+        } catch (error) {
+            next(error);
+        }
+
     }
 
     async saveUser(phone, code) {
