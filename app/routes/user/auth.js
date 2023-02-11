@@ -33,7 +33,7 @@ const router = require('express').Router();
  *                  description: Internal server error
  */
 
-router.post("/get-otp", UserAuthController.getOTP);
+router.post("/get-otp", UserAuthController.getOtp);
 
 
 /**

@@ -6,18 +6,37 @@ const { getOtpSchema, checkOtpSchema } = require('../../../validators/user/auth.
 const Controller = require('../../controller');
 
 class UserAuthController extends Controller {
-
-    async getOTP(req, res, next) {
+    
+    async getOtp(req, res, next) {
         try {
-            await getOtpSchema.validateAsync(req.body); //? Validate req.body => phone
-
-            const { phone } = req.body;
+            await getOtpSchema.validateAsync(req.body);
+        
+            //? Create OTP => randomCode with expires
             const code = randomNumberGenerator();
+            let otp = {
+                code,
+                expiresIn: EXPIRES_IN
+            }
+    
+            const { phone } = req.body;
+            const user = await UserModel.findOne({ phone });
 
-            const result = await this.saveUser(phone, code);
+            //? Check if user already existed => if exist => update that with new OTP
+            if(user) {
+                const updateResult = await UserModel.updateOne({ phone }, { $set: {otp} });
+                if(updateResult.modifiedCount == 0) throw createError.InternalServerError("خطای سرور");
 
-            if(!result) throw createError.Unauthorized("ورود شما با مشکل مواجه شد");
+            } else {
+                //? Else crate new user in database
+                const createUserResult = await UserModel.create({
+                    phone,
+                    otp,
+                    Roles: [USER_ROLE]
+                })
+                if(!createUserResult) throw createError.InternalServerError("خطای سرور");
+            }
 
+            //? Send Data
             return res.status(200).send({
                 data: {
                     statusCode: 200,
@@ -25,13 +44,13 @@ class UserAuthController extends Controller {
                     code,
                     phone
                 }
-            });
-            
-            
+            })
+
         } catch (error) {
             next(error);
         }
     }
+
 
     async checkOTP(req, res, next) {
         try {
@@ -55,36 +74,6 @@ class UserAuthController extends Controller {
             next(error);
         }
 
-    }
-
-    async saveUser(phone, code) {
-        let otp = {
-            code,
-            expiresIn: EXPIRES_IN
-        }
-        const user = await this.checkExistUser(phone);
-        if(user) {
-            return (await this.updateUser(phone, {otp}))
-        }
-        return !!(await UserModel.create({
-            phone,
-            otp,
-            Roles: [USER_ROLE]
-        }))
-    }
-
-    async checkExistUser(phone) {
-        const user = await UserModel.findOne({ phone });
-        return !!user;
-    }
-
-    async updateUser(phone, objectData = {}) {
-        const badValues = ["", " ", 0, -1, NaN, undefined, null];
-        Object.values(objectData).forEach(value => {
-            if(badValues.includes(objectData[value])) delete objectData[value];
-        })
-        const result = await UserModel.updateOne({ phone }, { $set: objectData });
-        return !!result.modifiedCount;
     }
 
 
