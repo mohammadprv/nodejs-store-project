@@ -1,4 +1,5 @@
 const homeController = require('../../http/controllers/api/home.controller');
+const { VerifyAccessToken } = require('../../http/middleWares/verifyAccessToken');
 
 const router = require('express').Router();
 /**
@@ -14,6 +15,10 @@ const router = require('express').Router();
  *      summary: Index Route
  *      tags: [IndexPage]
  *      description: get all data for index page
+ *      parameters:
+ *          -   in: header
+ *              name: access-token
+ *              example: Bearer YourToken...
  *      responses:
  *          200:
  *              description: success
@@ -21,7 +26,7 @@ const router = require('express').Router();
  *              description: not found
  */
 
-router.get("/", homeController.indexPage);
+router.get("/", VerifyAccessToken, homeController.indexPage);
 
 module.exports = {
     HomeRoutes: router

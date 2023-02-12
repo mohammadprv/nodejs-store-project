@@ -1,7 +1,7 @@
 const createError = require('http-errors');
 const { UserModel } = require('../../../../model/users');
 const { EXPIRES_IN, USER_ROLE } = require('../../../../utils/constant');
-const { randomNumberGenerator, createAccessToken } = require('../../../../utils/functions');
+const { randomNumberGenerator, createAccessToken, signAccessToken } = require('../../../../utils/functions');
 const { getOtpSchema, checkOtpSchema } = require('../../../validators/user/auth.schema');
 const Controller = require('../../controller');
 
