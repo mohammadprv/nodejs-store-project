@@ -1,6 +1,6 @@
 const createError = require('http-errors');
 const { UserModel } = require('../../../../model/users');
-const { EXPIRES_IN, USER_ROLE } = require('../../../../utils/constant');
+const { ROLES } = require('../../../../utils/constant');
 const { randomNumberGenerator, createAccessToken, signAccessToken, createRefreshToken, verifyRefreshToken } = require('../../../../utils/functions');
 const { getOtpSchema, checkOtpSchema } = require('../../../validators/user/auth.schema');
 const Controller = require('../../controller');
@@ -15,7 +15,7 @@ class UserAuthController extends Controller {
             const code = randomNumberGenerator();
             let otp = {
                 code,
-                expiresIn: EXPIRES_IN
+                expiresIn: new Date().getTime() + 120000
             }
     
             const { phone } = req.body;
@@ -31,7 +31,7 @@ class UserAuthController extends Controller {
                 const createUserResult = await UserModel.create({
                     phone,
                     otp,
-                    Roles: [USER_ROLE]
+                    Roles: [ROLES.USER]
                 })
                 if(!createUserResult) throw createError.InternalServerError("خطای سرور");
             }

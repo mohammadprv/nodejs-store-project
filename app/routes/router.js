@@ -1,7 +1,12 @@
 const { HomeRoutes } = require('./api');
+const { DeveloperRotes } = require('./developer.routes');
 const { UserAuthRoutes } = require('./user/auth');
 
 const router = require('express').Router();
+
+
+//? Developer Routes
+router.use("/developer", DeveloperRotes)
 
 
 //? User Auth Routes

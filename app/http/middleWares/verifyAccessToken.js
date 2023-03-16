@@ -6,7 +6,7 @@ const { ACCESS_TOKEN_SECRET_KEY } = require('../../utils/constant');
 const VerifyAccessToken = (req, res, next) => {
     const headers = req.headers;
     const [bearer, token] = headers?.["access-token"]?.split(" ") || [];
-    
+
     if(token && bearer.toLowerCase() === "bearer") {
         jwt.verify(token, ACCESS_TOKEN_SECRET_KEY, async (err, payload) => {
             if(err) return next(createError.Unauthorized("وارد حساب کاربری خود شوید"));
