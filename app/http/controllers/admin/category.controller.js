@@ -22,9 +22,19 @@ class CategoryController extends Controller {
         }
     }
 
-    removeCategory(req, res, next) {
+    async removeCategory(req, res, next) {
         try {
-            
+            const { id } = req.params;
+            const category = await CategoryModel.findById(id);
+            if (!category) throw createError.NotFound("دسته بندی یافت نشد");
+            const deleteResult = await CategoryModel.deleteOne({ _id: category._id });
+            if(deleteResult.deletedCount == 0) throw createError.InternalServerError("دسته بندی حذف نشد");
+            return res.status(200).json({
+                data: {
+                    statusCode: 200,
+                    message: "دسته بندی با موفقیت حذف شد"
+                }
+            })
         } catch (error) {
             next(error);
         }
