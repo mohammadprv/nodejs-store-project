@@ -24,6 +24,48 @@ const router = require('express').Router();
 router.post("/add", CategoryController.addCategory);
 
 
+/**
+ * @swagger
+ *  /admin/category/parents:
+ *      get:
+ *          tags: [Admin-Panel]
+ *          summary: Get All Parents
+ *          responses:
+ *              200:
+ *                  description: success 
+ */
+router.get("/parents", CategoryController.getAllParents);
+
+/**
+ * @swagger
+ *  /admin/category/children/{parent}:
+ *      get:
+ *          tags: [Admin-Panel]
+ *          summary: Get All Children Of Parent
+ *          parameters: 
+ *              -   in: path
+ *                  name: parent
+ *                  type: string
+ *                  required: true
+ *          responses:
+ *              200:
+ *                  description: success 
+ */
+router.get("/children/:parent", CategoryController.getChildrenOfParent);
+
+/**
+ * @swagger
+ *  /admin/category/all:
+ *      get:
+ *          tags: [Admin-Panel]
+ *          summary: Get All Category with their children
+ *          responses:
+ *              200:
+ *                  description: success 
+ */
+router.get("/all", CategoryController.getAllCategory);
+
+
 module.exports = {
     CategoryRoutes: router
 }
