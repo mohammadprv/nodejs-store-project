@@ -27,7 +27,10 @@ class CategoryController extends Controller {
             const { id } = req.params;
             const category = await CategoryModel.findById(id);
             if (!category) throw createError.NotFound("دسته بندی یافت نشد");
-            const deleteResult = await CategoryModel.deleteOne({ _id: category._id });
+            const deleteResult = await CategoryModel.deleteMany({$or: [
+                { _id: category._id },
+                { parent: category._id }
+            ]});
             if(deleteResult.deletedCount == 0) throw createError.InternalServerError("دسته بندی حذف نشد");
             return res.status(200).json({
                 data: {
