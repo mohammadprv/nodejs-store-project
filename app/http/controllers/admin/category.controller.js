@@ -1,4 +1,5 @@
 const createError = require('http-errors');
+const mongoose = require('mongoose');
 
 const { CategoryModel } = require("../../../model/categories");
 const { addCategorySchema } = require("../../validators/admin/category.schema");
@@ -53,28 +54,6 @@ class CategoryController extends Controller {
 
     async getAllCategory(req, res, next) {
         try {
-            // const categories = await CategoryModel.aggregate([
-            //     {
-            //         $lookup: {
-            //             from: "categories",
-            //             localField: "_id",
-            //             foreignField: "parent",
-            //             as: "children"
-            //         }
-            //     },
-            //     {
-            //         $project: {
-            //             __v: 0,
-            //             "children.__v": 0,
-            //             "children.parent": 0
-            //         }
-            //     },
-            //     {
-            //         $match: {
-            //             parent: undefined
-            //         }
-            //     }
-            // ]);
             const categories = await CategoryModel.aggregate([
                 {
                     $graphLookup: {
@@ -111,9 +90,39 @@ class CategoryController extends Controller {
         }
     }
 
-    getCategoryByID(req, res, next) {
+    async getCategoryByID(req, res, next) {
         try {
-            
+            const { id } = req.params;
+            const categories = await CategoryModel.aggregate([
+                {
+                    $match: {
+                        _id: mongoose.Types.ObjectId(id)
+                    }
+                },
+                {
+                    $lookup: {
+                        from : "categories",
+                        foreignField: "parent",
+                        localField: "_id",
+                        as: "children"
+                    }
+                },
+                {
+                    $project: {
+                        __v: 0,
+                        "children.__v": 0,
+                        "children.parent": 0
+                    }
+                }
+            ]);
+
+            return res.status(200).json({
+                data: {
+                    statusCode: 200,
+                    categories
+                }
+            })
+
         } catch (error) {
             next(error);
         }
