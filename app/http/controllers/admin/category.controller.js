@@ -50,12 +50,37 @@ class CategoryController extends Controller {
 
     async getAllCategory(req, res, next) {
         try {
+            // const categories = await CategoryModel.aggregate([
+            //     {
+            //         $lookup: {
+            //             from: "categories",
+            //             localField: "_id",
+            //             foreignField: "parent",
+            //             as: "children"
+            //         }
+            //     },
+            //     {
+            //         $project: {
+            //             __v: 0,
+            //             "children.__v": 0,
+            //             "children.parent": 0
+            //         }
+            //     },
+            //     {
+            //         $match: {
+            //             parent: undefined
+            //         }
+            //     }
+            // ]);
             const categories = await CategoryModel.aggregate([
                 {
-                    $lookup: {
+                    $graphLookup: {
                         from: "categories",
-                        localField: "_id",
-                        foreignField: "parent",
+                        startWith: "$_id",
+                        connectFromField: "_id",
+                        connectToField: "parent",
+                        depthField: "depth",
+                        maxDepth: 5,
                         as: "children"
                     }
                 },
@@ -64,6 +89,11 @@ class CategoryController extends Controller {
                         __v: 0,
                         "children.__v": 0,
                         "children.parent": 0
+                    }
+                },
+                {
+                    $match: {
+                        parent: undefined
                     }
                 }
             ]);
