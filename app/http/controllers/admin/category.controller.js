@@ -54,31 +54,7 @@ class CategoryController extends Controller {
 
     async getAllCategory(req, res, next) {
         try {
-            const categories = await CategoryModel.aggregate([
-                {
-                    $graphLookup: {
-                        from: "categories",
-                        startWith: "$_id",
-                        connectFromField: "_id",
-                        connectToField: "parent",
-                        depthField: "depth",
-                        maxDepth: 5,
-                        as: "children"
-                    }
-                },
-                {
-                    $project: {
-                        __v: 0,
-                        "children.__v": 0,
-                        "children.parent": 0
-                    }
-                },
-                {
-                    $match: {
-                        parent: undefined
-                    }
-                }
-            ]);
+            const categories = await CategoryModel.find({ parent: undefined });
             return res.status(200).json({
                 data: {
                     statusCode: 200,
@@ -93,29 +69,7 @@ class CategoryController extends Controller {
     async getCategoryByID(req, res, next) {
         try {
             const { id } = req.params;
-            const categories = await CategoryModel.aggregate([
-                {
-                    $match: {
-                        _id: mongoose.Types.ObjectId(id)
-                    }
-                },
-                {
-                    $lookup: {
-                        from : "categories",
-                        foreignField: "parent",
-                        localField: "_id",
-                        as: "children"
-                    }
-                },
-                {
-                    $project: {
-                        __v: 0,
-                        "children.__v": 0,
-                        "children.parent": 0
-                    }
-                }
-            ]);
-
+            const categories = await CategoryModel.findOne({ _id: id }, { parent: 0, __v: 0 });
             return res.status(200).json({
                 data: {
                     statusCode: 200,
