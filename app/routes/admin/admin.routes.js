@@ -6,8 +6,10 @@ const router = require('express').Router();
 /**
  * @swagger
  *  tags:
- *      name: Admin-Panel
- *      description: Admin Actions
+ *      -   name: Admin-Panel
+ *          description: Admin Actions
+ *      -   name: Category(Admin-Panel)
+ *          description: All Category Routes
  */
 router.use("/category", CategoryRoutes);
 

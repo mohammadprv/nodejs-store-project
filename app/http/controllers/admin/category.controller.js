@@ -2,7 +2,7 @@ const createError = require('http-errors');
 const mongoose = require('mongoose');
 
 const { CategoryModel } = require("../../../model/categories");
-const { addCategorySchema } = require("../../validators/admin/category.schema");
+const { addCategorySchema, editCategorySchema } = require("../../validators/admin/category.schema");
 const Controller = require("../controller");
 
 class CategoryController extends Controller {
@@ -44,9 +44,21 @@ class CategoryController extends Controller {
         }
     }
 
-    editCategory(req, res, next) {
+    async editCategoryTitle(req, res, next) {
         try {
-            
+            const { id } = req.params;
+            const { title } = req.body;
+            const category = await CategoryModel.findById(id);
+            if(!category) throw createError.NotFound("دسته بندی یافت نشد");
+            await editCategorySchema.validateAsync(req.body);
+            const updateResult = await CategoryModel.updateOne({ _id: id }, { $set: { title } });
+            if(updateResult.modifiedCount == 0) throw createError.InternalServerError("به روزرسانی انجام نشد");
+            return res.status(200).json({
+                data: {
+                    statusCode: 200,
+                    message: "به روزرسانی انجام شد"
+                }
+            })
         } catch (error) {
             next(error);
         }
