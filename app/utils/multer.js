@@ -4,9 +4,9 @@ const fs = require('fs');
 
 const createDirectoryPath = () => {
     const date = new Date();
-    const year = date.getFullYear();
-    const month = date.getMonth();
-    const day = date.getDate();
+    const year = date.getFullYear() + "";
+    const month = date.getMonth() + "";
+    const day = date.getDate() + "";
     const directory = path.join(__dirname, "..", "..", "public", "uploads", "blogs", year, month, day);
     fs.mkdirSync(directory, { recursive: true });
     return directory;
