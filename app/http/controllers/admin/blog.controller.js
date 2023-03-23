@@ -7,12 +7,13 @@ const Controller = require("../controller");
 class BlogController extends Controller {
     async createBlog(req, res, next) {
         try {
+            const user = req.user;
             const blogDataBody = await createBLogSchema.validateAsync(req.body);
             req.body.image = path.join(blogDataBody.fileUploadPath, blogDataBody.filename).replace(/\\/g, "/");
             req.body.image = `${req.protocol}://${req.get("host")}/${req.body.image}`;
             const { title, text, short_text, category, tags } = blogDataBody;
             const image = req.body.image;
-            const blog = await BlogModel.create({ title, image, text, short_text, category, tags });
+            const blog = await BlogModel.create({ title, image, text, short_text, category, tags, author: user._id });
             if(!blog) throw createError.InternalServerError("بلاگ جدید ایجاد نشد");
             return res.status(201).json({
                 statusCode: 201,
@@ -35,10 +36,51 @@ class BlogController extends Controller {
 
     async getListOfBlogs(req, res, next) {
         try {
+            const blogs = await BlogModel.aggregate([
+                {
+                    $match: {}
+                },
+                {
+                    $lookup: {
+                        from: "users",
+                        localField: "author",
+                        foreignField: "_id",
+                        as: "author"
+                    }
+                },
+                {
+                    $project: {
+                        "author.__v": 0,
+                        "author.otp": 0,
+                        "author.bills": 0,
+                        "author.discount": 0,
+                        "author.Roles": 0,
+                    }
+                },
+                {
+                    $unwind: "$author",
+                },
+                {
+                    $lookup: {
+                        from: "categories",
+                        localField: "category",
+                        foreignField: "_id",
+                        as: "category"
+                    }
+                },
+                {
+                    $project: {
+                        "category.__v": 0
+                    }
+                },
+                {
+                    $unwind: "$category"
+                }
+            ]);
             return res.status(200).json({
                 statusCode: 200,
                 data: {
-                    blogs: []
+                    blogs
                 }
             })
         } catch (error) {

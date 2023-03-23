@@ -10,6 +10,11 @@ const router = require('express').Router();
  *      get:
  *          tags: [Blog(Admin-Panel)]
  *          summary: Get All Blogs
+ *          parameters:
+ *              -   in: header
+ *                  name: access-token
+ *                  type: string
+ *                  value: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZSI6IjA5MTkwMjUxNTE3IiwiaWF0IjoxNjc5NTY3MzQ0LCJleHAiOjE2Nzk1NzA5NDR9.zN7G559oiWdMwy5c6YGUo5DadFi1CJ1V-jt76HN5sqs
  *          responses:
  *              200:
  *                  description: success
@@ -26,6 +31,10 @@ router.get("/", BlogController.getListOfBlogs);
  *          consumes:
  *              -   multipart/form-data
  *          parameters:
+ *              -   in: header
+ *                  name: access-token
+ *                  type: string
+ *                  value: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZSI6IjA5MTkwMjUxNTE3IiwiaWF0IjoxNjc5NTY3MzQ0LCJleHAiOjE2Nzk1NzA5NDR9.zN7G559oiWdMwy5c6YGUo5DadFi1CJ1V-jt76HN5sqs
  *              -   in: formData
  *                  name: title
  *                  required: true

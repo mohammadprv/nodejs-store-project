@@ -33,8 +33,8 @@ const fileFilter = (req, file, cb) => {
     if(extNames.includes(extname)) return cb(null, true);
     return cb(createError.BadRequest("فرمت تصویر ارسال شده صحیح نمیباشد"));
 }
-
-const uploadFile = multer({ storage, fileFilter });
+const maxSize = 1 * 1000 * 1000;
+const uploadFile = multer({ storage, fileFilter, limits: { fileSize: maxSize } });
 
 module.exports = {
     uploadFile
