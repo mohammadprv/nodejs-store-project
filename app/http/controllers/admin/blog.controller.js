@@ -25,14 +25,7 @@ class BlogController extends Controller {
             next(error);
         }
     }
-    
-    async getBlogById(req, res, next) {
-        try {
-            
-        } catch (error) {
-            next(error);
-        }
-    }
+
 
     async getListOfBlogs(req, res, next) {
         try {
@@ -89,6 +82,22 @@ class BlogController extends Controller {
     }
 
 
+    
+    async getBlogById(req, res, next) {
+        try {
+            const { id } = req.params;
+            const blog = await this.findBlog({ _id: id });
+            return res.status(200).json({
+                statusCode: 200,
+                data: {
+                    blog
+                }
+            })
+        } catch (error) {
+            next(error);
+        }
+    }
+
     async getCommentsOfBlog(req, res, next) {
         try {
             
@@ -113,6 +122,14 @@ class BlogController extends Controller {
         }
     }
     
+
+    async findBlog(query = {}) {
+        const blog = await BlogModel.findOne(query).populate([{ path: "category", select: ["title"] }, { path: "author", select: ["phone", "first_name", "last_name"] }]);
+        if(!blog) throw createError.NotFound("هیچ بلاگی یافت نشد")
+        return blog;
+    }
+
+
 }
 
 

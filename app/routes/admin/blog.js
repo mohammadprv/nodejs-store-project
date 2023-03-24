@@ -14,7 +14,7 @@ const router = require('express').Router();
  *              -   in: header
  *                  name: access-token
  *                  type: string
- *                  value: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZSI6IjA5MTkwMjUxNTE3IiwiaWF0IjoxNjc5NTY3MzQ0LCJleHAiOjE2Nzk1NzA5NDR9.zN7G559oiWdMwy5c6YGUo5DadFi1CJ1V-jt76HN5sqs
+ *                  value: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZSI6IjA5MTkwMjUxNTE3IiwiaWF0IjoxNjc5NjQ2MDUzLCJleHAiOjE2Nzk2NDk2NTN9.bOpJ17dh0jh8IWi4t0Tp_lGoGK44hYn3fFfIqNhhGoc
  *          responses:
  *              200:
  *                  description: success
@@ -64,6 +64,28 @@ router.get("/", BlogController.getListOfBlogs);
  *                  description: creates
  */
 router.post("/add", uploadFile.single("image"), stringToArray("tags"), BlogController.createBlog);
+
+
+/**
+ * @swagger
+ *  /admin/blogs/{id}:
+ *      get:
+ *          tags: [Blog(Admin-Panel)]
+ *          summary: Get blog by ID and populate this field
+ *          parameters:
+ *              -   in: path
+ *                  name: id
+ *                  type: string
+ *                  required: true
+ *              -   in: header
+ *                  name: access-token
+ *                  type: string
+ *                  value: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZSI6IjA5MTkwMjUxNTE3IiwiaWF0IjoxNjc5NjQ2MDUzLCJleHAiOjE2Nzk2NDk2NTN9.bOpJ17dh0jh8IWi4t0Tp_lGoGK44hYn3fFfIqNhhGoc
+ *          responses: 
+ *              200:
+ *                  description: success
+ */
+router.get("/:id", BlogController.getBlogById);
 
 module.exports = {
     BlogAdminApiRoutes: router
