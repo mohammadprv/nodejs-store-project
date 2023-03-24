@@ -108,7 +108,16 @@ class BlogController extends Controller {
 
     async deleteBlogById(req, res, next) {
         try {
-            
+            const { id } = req.params;
+            await this.findBlog({ _id: id });
+            const result = await BlogModel.deleteOne({ _id: id });
+            if(result.deletedCount == 0) throw createError.InternalServerError("حذف انجام نشد");
+            return res.status(200).json({
+                statusCode: 200,
+                data: {
+                    message: "حذف بلاگ با موفقیت انجام شد"
+                }
+            })
         } catch (error) {
             next(error);
         }

@@ -87,6 +87,29 @@ router.post("/add", uploadFile.single("image"), stringToArray("tags"), BlogContr
  */
 router.get("/:id", BlogController.getBlogById);
 
+
+/**
+ * @swagger
+ *  /admin/blogs/remove/{id}:
+ *      get:
+ *          tags: [Blog(Admin-Panel)]
+ *          summary: remove blog by ID
+ *          parameters:
+ *              -   in: path
+ *                  name: id
+ *                  type: string
+ *                  required: true
+ *              -   in: header
+ *                  name: access-token
+ *                  type: string
+ *                  value: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZSI6IjA5MTkwMjUxNTE3IiwiaWF0IjoxNjc5NjQ2MDUzLCJleHAiOjE2Nzk2NDk2NTN9.bOpJ17dh0jh8IWi4t0Tp_lGoGK44hYn3fFfIqNhhGoc
+ *          responses: 
+ *              200:
+ *                  description: success
+ */
+router.get("/remove/:id", BlogController.deleteBlogById);
+
+
 module.exports = {
     BlogAdminApiRoutes: router
 }
