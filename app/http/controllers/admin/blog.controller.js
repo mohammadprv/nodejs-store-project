@@ -26,7 +26,6 @@ class BlogController extends Controller {
         }
     }
 
-
     async getListOfBlogs(req, res, next) {
         try {
             const blogs = await BlogModel.aggregate([
@@ -81,8 +80,6 @@ class BlogController extends Controller {
         }
     }
 
-
-    
     async getBlogById(req, res, next) {
         try {
             const { id } = req.params;
@@ -125,7 +122,28 @@ class BlogController extends Controller {
 
     async updateBlogById(req, res, next) {
         try {
-            
+            const { id } = req.params;
+            if(req?.body?.fileUploadPath && req?.body?.filename) {
+                req.body.image = path.join(req.body.fileUploadPath, req.body.filename).replace(/\\/g, "/");
+                req.body.image = `${req.protocol}://${req.get("host")}/${req.body.image}`;
+            }
+            const data = req.body;
+            const badValues = ["", " ", "0", 0, null, undefined];
+            const blackListFields = ["comments", "like", "dislike", "bookmark", "author"];
+            Object.keys(data).forEach(key => {
+                if(blackListFields.includes(key)) delete data[key];
+                if(typeof data[key] == "string") data[key] = data[key].trim();
+                if(Array.isArray(data[key]) && Array.length > 0) data[key] = data[key].map(item => item.trim());
+                if(badValues.includes(data[key])) delete data[key];
+            });
+            const updateBlogResult = await BlogModel.updateOne({ _id: id }, { $set: data });
+            if(updateBlogResult.modifiedCount == 0) throw createError.InternalServerError("بروزرسانی بلاگ انجام نشد");
+            return res.status(200).json({
+                statusCode: 200,
+                data: {
+                    message: "بروزرسانی بلاگ با موفقیت انجام شد"
+                }
+            })
         } catch (error) {
             next(error);
         }

@@ -16,14 +16,20 @@ const createDirectoryPath = (req) => {
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        const filePath = createDirectoryPath(req);
-        cb(null, filePath);
+        if(file?.originalname) {
+            const filePath = createDirectoryPath(req);
+            return cb(null, filePath);
+        }
+        cb(null, null);
     },
     filename: (req, file, cb) => {
-        const fileExtName = path.extname(file.originalname);
-        const fileName = String(new Date().getTime() + fileExtName);
-        req.body.filename = fileName;
-        cb(null, fileName);
+        if(file?.originalname) {
+            const fileExtName = path.extname(file.originalname);
+            const fileName = String(new Date().getTime() + fileExtName);
+            req.body.filename = fileName;
+            return cb(null, fileName);
+        }
+        cb(null, null);
     }
 });
 
