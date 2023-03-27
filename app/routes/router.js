@@ -1,3 +1,4 @@
+const { VerifyAccessToken, checkRole } = require('../http/middleWares/verifyAccessToken');
 const { AdminRoutes } = require('./admin/admin.routes');
 const { HomeRoutes } = require('./api');
 const { DeveloperRotes } = require('./developer.routes');
@@ -9,7 +10,7 @@ const router = require('express').Router();
 router.use("/developer", DeveloperRotes)
 
 //? Admin Routes
-router.use("/admin", AdminRoutes);
+router.use("/admin", VerifyAccessToken, checkRole("ADMIN"), AdminRoutes);
 
 
 //? User Auth Routes
