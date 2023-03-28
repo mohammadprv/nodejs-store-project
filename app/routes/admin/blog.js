@@ -148,5 +148,5 @@ router.patch("/update/:id", uploadFile.single("image"), stringToArray("tags"), B
 
 
 module.exports = {
-    BlogAdminApiRoutes: router
+    AdminApiBlogRouter: router
 }

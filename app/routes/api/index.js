@@ -8,6 +8,7 @@ const router = require('express').Router();
  *  name: IndexPage
  *  description: Index Page Route And Data
  */
+
 /**
  * @swagger
  * /:
@@ -15,10 +16,6 @@ const router = require('express').Router();
  *      summary: Index Route
  *      tags: [IndexPage]
  *      description: get all data for index page
- *      parameters:
- *          -   in: header
- *              name: access-token
- *              example: Bearer YourToken...
  *      responses:
  *          200:
  *              description: success
@@ -26,7 +23,7 @@ const router = require('express').Router();
  *              description: not found
  */
 
-router.get("/", VerifyAccessToken, homeController.indexPage);
+router.get("/", homeController.indexPage);
 
 module.exports = {
     HomeRoutes: router

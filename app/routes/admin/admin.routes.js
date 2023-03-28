@@ -1,6 +1,5 @@
-const { VerifyAccessToken } = require('../../http/middleWares/verifyAccessToken');
-const { BlogAdminApiRoutes } = require('./blog');
-const { CategoryRoutes } = require('./category');
+const { AdminApiBlogRouter } = require('./blog');
+const { AdminApiCategoryRouter } = require('./category');
 const { AdminApiProductRouter } = require('./product');
 
 const router = require('express').Router();
@@ -11,15 +10,17 @@ const router = require('express').Router();
  *  tags:
  *      -   name: Admin-Panel
  *          description: Admin Actions
+ *      -   name: Product(Admin-Panel)
+ *          description: All Product Management Rotes For Admins
  *      -   name: Category(Admin-Panel)
  *          description: All Category Routes
  *      -   name: Blog(Admin-Panel)
- *      -   description: All Blog Management Routes For Admins
+ *          description: All Blog Management Routes For Admins
+
  */
-router.use("/category", CategoryRoutes);
+router.use("/category", AdminApiCategoryRouter);
 
-router.use("/blogs", VerifyAccessToken, BlogAdminApiRoutes);
-
+router.use("/blogs", AdminApiBlogRouter);
 
 router.use("/product", AdminApiProductRouter);
 

@@ -7,7 +7,7 @@ const { UserAuthRoutes } = require('./user/auth');
 const router = require('express').Router();
 
 //? Developer Routes
-router.use("/developer", DeveloperRotes)
+router.use("/developer", DeveloperRotes);
 
 //? Admin Routes
 router.use("/admin", VerifyAccessToken, checkRole("ADMIN"), AdminRoutes);
