@@ -6,15 +6,45 @@ const router = require('express').Router();
 
 /**
  * @swagger
+ *  components:
+ *      schemas:
+ *          Blog:
+ *              type: object
+ *              required: 
+ *                  -   title
+ *                  -   short_text
+ *                  -   text
+ *                  -   tags
+ *                  -   category
+ *                  -   image
+ *              properties:
+ *                  title: 
+ *                      type: string
+ *                      description: Title of new blog
+ *                  short_text:
+ *                      type: string
+ *                      description: Blog text summary 
+ *                  text:
+ *                      type: string
+ *                      description: Blog main text
+ *                  tags:
+ *                      type: string
+ *                      description: List of tags => for example => tag1#tag2#tag3
+ *                  category:
+ *                      type: string
+ *                      description: Related category ID
+ *                  image:
+ *                      type: file
+ *                      description: Blog main image
+ */
+
+
+/**
+ * @swagger
  *  /admin/blogs:
  *      get:
  *          tags: [Blog(Admin-Panel)]
  *          summary: Get All Blogs
- *          parameters:
- *              -   in: header
- *                  name: access-token
- *                  type: string
- *                  value: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZSI6IjA5MTkwMjUxNTE3IiwiaWF0IjoxNjc5OTEwNTI0LCJleHAiOjE2Nzk5MTQxMjR9.BM4pu_C8mWRzI0EzoZBvD-BVzgJsofWJOFfMjFzj3kM
  *          responses:
  *              200:
  *                  description: success
@@ -28,37 +58,12 @@ router.get("/", BlogController.getListOfBlogs);
  *      post:
  *          tags: [Blog(Admin-Panel)]
  *          summary: Create new blog
- *          consumes:
- *              -   multipart/form-data
- *          parameters:
- *              -   in: header
- *                  name: access-token
- *                  type: string
- *                  value: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZSI6IjA5MTkwMjUxNTE3IiwiaWF0IjoxNjc5OTEwNTI0LCJleHAiOjE2Nzk5MTQxMjR9.BM4pu_C8mWRzI0EzoZBvD-BVzgJsofWJOFfMjFzj3kM
- *              -   in: formData
- *                  name: title
- *                  required: true
- *                  type: string
- *              -   in: formData
- *                  name: text
- *                  required: true
- *                  type: string
- *              -   in: formData
- *                  name: short_text
- *                  required: true
- *                  type: string
- *              -   in: formData
- *                  name: tags
- *                  type: string
- *                  example: tag1#tag2#tag3_foo#foo_bar || str || undefined
- *              -   in: formData
- *                  name: category
- *                  required: true
- *                  type: string
- *              -   in: formData
- *                  name: image
- *                  required: true
- *                  type: file
+ *          requestBody:
+ *              required: true
+ *              content:
+ *                  multipart/formdata:
+ *                      schema: 
+ *                          $ref: "#/components/schemas/Blog"
  *          responses:
  *              201:
  *                  description: creates
@@ -77,10 +82,6 @@ router.post("/add", uploadFile.single("image"), stringToArray("tags"), BlogContr
  *                  name: id
  *                  type: string
  *                  required: true
- *              -   in: header
- *                  name: access-token
- *                  type: string
- *                  value: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZSI6IjA5MTkwMjUxNTE3IiwiaWF0IjoxNjc5OTEwNTI0LCJleHAiOjE2Nzk5MTQxMjR9.BM4pu_C8mWRzI0EzoZBvD-BVzgJsofWJOFfMjFzj3kM
  *          responses: 
  *              200:
  *                  description: success
@@ -99,10 +100,6 @@ router.get("/:id", BlogController.getBlogById);
  *                  name: id
  *                  type: string
  *                  required: true
- *              -   in: header
- *                  name: access-token
- *                  type: string
- *                  value: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZSI6IjA5MTkwMjUxNTE3IiwiaWF0IjoxNjc5OTEwNTI0LCJleHAiOjE2Nzk5MTQxMjR9.BM4pu_C8mWRzI0EzoZBvD-BVzgJsofWJOFfMjFzj3kM
  *          responses: 
  *              200:
  *                  description: success
@@ -120,11 +117,6 @@ router.get("/remove/:id", BlogController.deleteBlogById);
  *          consumes:
  *              -   multipart/form-data
  *          parameters:
- *              -   in: header
- *                  name: access-token
- *                  type: string
- *                  required: true
- *                  value: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZSI6IjA5MTkwMjUxNTE3IiwiaWF0IjoxNjc5OTEwNTI0LCJleHAiOjE2Nzk5MTQxMjR9.BM4pu_C8mWRzI0EzoZBvD-BVzgJsofWJOFfMjFzj3kM
  *              -   in: path
  *                  name: id
  *                  type: string

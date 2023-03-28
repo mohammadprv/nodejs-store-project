@@ -2,6 +2,39 @@ const { UserAuthController } = require('../../http/controllers/user/auth/auth.co
 
 const router = require('express').Router();
 
+/**
+ * @swagger
+ *  components:
+ *      schemas:
+ *          GetOtp:
+ *              type: object
+ *              required: 
+ *                  -   phone
+ *              properties:
+ *                  phone: 
+ *                      type: string
+ *                      description: user mobile for get OTP
+ *          CheckOtp:
+ *              type: object
+ *              required: 
+ *                  -   phone
+ *                  -   code
+ *              properties:
+ *                  phone: 
+ *                      type: string
+ *                      description: user mobile for get OTP
+ *                  code: 
+ *                      type: string
+ *                      description: received Code from getOtp
+ *          RefreshToken:
+ *              type: object
+ *              required: 
+ *                  -   refreshToken
+ *              properties:
+ *                  refreshToken: 
+ *                      type: string
+ *                      description: get RefreshToken To generate new refresh and access token
+ */
 
 /**
  * @swagger
@@ -16,12 +49,15 @@ const router = require('express').Router();
  *          summary: User login with phone number
  *          tags: [User-Authorization]
  *          description: One Time Password (OTP)
- *          parameters:
- *          -   name: phone
- *              description: fa-IRI phonenumber
- *              in: formData
+ *          requestBody: 
  *              required: true
- *              type: string
+ *              content:
+ *                  application/x-www-form-urlencoded:
+ *                      schema:
+ *                          $ref: "#/components/schemas/GetOtp"
+ *                  application/json:
+ *                      schema:
+ *                          $ref: "#/components/schemas/GetOtp"
  *          responses:
  *              201:
  *                  description: Success
@@ -42,17 +78,12 @@ router.post("/get-otp", UserAuthController.getOtp);
  *          summary: check otp value
  *          tags: [User-Authorization]
  *          description: Check Otp with mobile and code and expire date
- *          parameters:
- *          -   name: phone
- *              description: fa-IRI phonenumber
- *              in: formData
+ *          requestBody:
  *              required: true
- *              type: string
- *          -   name: code
- *              description: enter sms code
- *              in: formData
- *              required: true
- *              type: string
+ *              content:
+ *                  application/x-www-form-urlencoded:
+ *                      schema: 
+ *                          $ref: "#/components/schemas/CheckOtp"
  *          responses:
  *              201:
  *                  description: Success
@@ -72,11 +103,12 @@ router.post("/check-otp", UserAuthController.checkOTP);
  *          tags: [User-Authorization]
  *          summary: send refreshToken fot get new accessToken and new refreshToken
  *          description: freshToken
- *          parameters:
- *              -   in: body
- *                  required: true
- *                  type: string
- *                  name: refreshToken
+ *          requestBody:
+ *              required: true
+ *              content: 
+ *                  application/x-www-form-urlencoded:
+ *                      schema:
+ *                          $ref: "#/components/schemas/RefreshToken"
  *          responses:
  *              200:
  *                  description: success
