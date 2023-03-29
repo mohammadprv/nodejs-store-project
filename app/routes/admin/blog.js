@@ -61,7 +61,7 @@ router.get("/", BlogController.getListOfBlogs);
  *          requestBody:
  *              required: true
  *              content:
- *                  multipart/formdata:
+ *                  multipart/form-data:
  *                      schema: 
  *                          $ref: "#/components/schemas/Blog"
  *          responses:

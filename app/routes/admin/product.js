@@ -42,7 +42,19 @@ const router = require('express').Router();
  *                      description: Product count
  *                  discount: 
  *                      type: string
- *                      description: Product discount 
+ *                      description: Product discount
+ *                  height: 
+ *                      type: string
+ *                      description: Product packet height 
+ *                  width: 
+ *                      type: string
+ *                      description: Product packet width
+ *                  weight: 
+ *                      type: string
+ *                      description: Product packet weight
+ *                  length: 
+ *                      type: string
+ *                      description: Product packet length
  *                  image: 
  *                      type: file
  *                      description: Product Image  
@@ -58,7 +70,7 @@ const router = require('express').Router();
  *          requestBody: 
  *              required: true
  *              content:
- *                  multipart/formdata:
+ *                  multipart/form-data:
  *                      schema:
  *                          $ref: "#/components/schemas/Product"
  *          responses:
