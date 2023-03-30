@@ -18,7 +18,7 @@ const Schema = new mongoose.Schema({
     count: { type: Number },
     type: { type: String, required: true },
     format: { type: String },
-    supplier: { type: mongoose.Types.ObjectId, required: true },
+    supplier: { type: mongoose.Types.ObjectId, ref: "user", required: true },
     feature: { type: Object, default: {
         length: "",
         height: "",

@@ -78,7 +78,19 @@ const router = require('express').Router();
  *                  description: Created
  */
 router.post("/add", uploadFile.single("image"), ProductController.addProduct);
-// router.get();
+
+/**
+ * @swagger
+ *  /admin/product/list:
+ *      get:
+ *          tags: [Product(Admin-Panel)]
+ *          summary: Get products list
+ *          responses:
+ *              200:
+ *                  description: Success
+ */
+router.get("/list", ProductController.getAllProducts);
+
 // router.patch();
 // router.delete();
 

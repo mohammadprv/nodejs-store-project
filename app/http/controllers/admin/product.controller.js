@@ -39,6 +39,61 @@ class ProductController extends Controller {
         }
     }
 
+
+    async getAllProducts(req, res, next) {
+        try {
+            const products = await ProductModel.aggregate([
+                {
+                    $match: {}
+                },
+                {
+                    $lookup: {
+                        from: "categories",
+                        localField: "category",
+                        foreignField: "_id",
+                        as: "category"
+                    }
+                },
+                {
+                    $project: {
+                        "category.__v": 0
+                    }
+                },
+                {
+                    $unwind: "$category"
+                },
+                {
+                    $lookup: {
+                        from: "users",
+                        localField: "supplier",
+                        foreignField: "_id",
+                        as: "supplier"
+                    }
+                },
+                {
+                    $project: {
+                        "supplier.otp": 0,
+                        "supplier.bills": 0,
+                        "supplier.discount": 0,
+                        "supplier.Roles": 0,
+                        "supplier.__v": 0,
+                    }
+                },
+                {
+                    $unwind: "$supplier"
+                },
+            ])
+            return res.status(200).json({
+                statusCode: 200,
+                data: {
+                    products
+                }
+            })
+        } catch (error) {
+            next(error);
+        }
+    }
+
     editProduct(req, res, next) {
         try {
             
@@ -48,14 +103,6 @@ class ProductController extends Controller {
     }
     
     removeProduct(req, res, next) {
-        try {
-            
-        } catch (error) {
-            next(error);
-        }
-    }
-
-    getAllProducts(req, res, next) {
         try {
             
         } catch (error) {
