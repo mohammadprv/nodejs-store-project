@@ -4,6 +4,7 @@ const { ROLES } = require('../../../../utils/constant');
 const { randomNumberGenerator, createAccessToken, signAccessToken, createRefreshToken, verifyRefreshToken } = require('../../../../utils/functions');
 const { getOtpSchema, checkOtpSchema } = require('../../../validators/user/auth.schema');
 const Controller = require('../../controller');
+const { StatusCodes } = require('http-status-codes');
 
 class UserAuthController extends Controller {
     
@@ -37,9 +38,9 @@ class UserAuthController extends Controller {
             }
 
             //? Send Data
-            return res.status(200).send({
+            return res.status(StatusCodes.OK).send({
+                statusCode: StatusCodes.OK,
                 data: {
-                    statusCode: 200,
                     message: "کد اعتبارسنجی برای شما ارسال شد",
                     code,
                     phone

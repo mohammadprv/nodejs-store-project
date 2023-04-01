@@ -55,8 +55,11 @@ const router = require('express').Router();
  *                  length: 
  *                      type: string
  *                      description: Product packet length
- *                  image: 
- *                      type: file
+ *                  images: 
+ *                      type: array
+ *                      items: 
+ *                          type: string
+ *                          format: binary
  *                      description: Product Image  
  * 
  */
@@ -77,7 +80,7 @@ const router = require('express').Router();
  *              201:
  *                  description: Created
  */
-router.post("/add", uploadFile.single("image"), ProductController.addProduct);
+router.post("/add", uploadFile.array("images", 10), ProductController.addProduct);
 
 /**
  * @swagger

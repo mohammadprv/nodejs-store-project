@@ -17,7 +17,7 @@ const addProductSchema = Joi.object({
     width: Joi.allow(null).error(createError.BadRequest("عرض وارد شده صحیح نمیباشد")),
     filename: Joi.string().pattern(/(\.png|\.jpg|\.jpeg|\.webp)$/).error(createError.BadRequest("تصویر ارسال شده صحیح نمیباشد")),
     fileUploadPath: Joi.allow(),
-    image: Joi.allow()
+    images: Joi.allow(),
 })
 
 module.exports = {

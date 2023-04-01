@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const path = require('path');
 const { UserModel } = require('../model/users');
 const { ACCESS_TOKEN_SECRET_KEY, REFRESH_TOKEN_SECRET_KEY } = require('./constant');
 const createError = require('http-errors');
@@ -48,13 +49,17 @@ function verifyRefreshToken(token) {
     })
 }
 
-
-
+function listOfImagesFromRequest(files, fileUploadPath) {
+    if(files?.length > 0) {
+        return ((files.map(file => path.join(fileUploadPath, file.filename))).map(item => item.replace(/\\/g, "/")));
+    } else return [];
+}
 
 
 module.exports = {
     randomNumberGenerator,
     createAccessToken,
     createRefreshToken,
-    verifyRefreshToken
+    verifyRefreshToken,
+    listOfImagesFromRequest
 }

@@ -3,14 +3,16 @@ const createError = require('http-errors');
 const path = require('path');
 const Controller = require("../controller");
 const { ProductModel } = require("../../../model/products");
+const { listOfImagesFromRequest } = require("../../../utils/functions");
+const { mongoIDValidator } = require("../../validators/public.validator");
+const { StatusCodes } = require('http-status-codes');
 
 class ProductController extends Controller {
     async addProduct(req, res, next) {
         try {
+            const images = listOfImagesFromRequest(req?.files || [], req.body.fileUploadPath);
             const productBody = await addProductSchema.validateAsync(req.body);
             const { title, text, short_text, tags, category, count, discount, width, height, weight, length } = productBody;
-            req.body.image = path.join(productBody.fileUploadPath, productBody.filename).replace(/\\/g, "/");
-            const image = `${req.protocol}://${req.get("host")}/${req.body.image}`;
             const supplier = req.user._id;
 
             let feature = {}, type = "physical";
@@ -25,11 +27,11 @@ class ProductController extends Controller {
                 else feature.length = length;
             } else type = "virtual";
 
-            const product = await ProductModel.create({ title, text, short_text, tags, category, count, discount, image, feature, supplier, type });
+            const product = await ProductModel.create({ title, text, short_text, tags, category, count, discount, images, feature, supplier, type });
             if(!product) throw createError.InternalServerError("خطای داخلی");
 
-            return res.status(201).json({
-                statusCode: 201,
+            return res.status(StatusCodes.CREATED).json({
+                statusCode: StatusCodes.CREATED,
                 data: {
                     message: "محصول جدید با موفقیت اضافه شد"
                 }
@@ -83,8 +85,8 @@ class ProductController extends Controller {
                     $unwind: "$supplier"
                 },
             ])
-            return res.status(200).json({
-                statusCode: 200,
+            return res.status(StatusCodes.OK).json({
+                statusCode: StatusCodes.OK,
                 data: {
                     products
                 }
@@ -116,6 +118,13 @@ class ProductController extends Controller {
         } catch (error) {
             next(error);
         }
+    }
+    
+    async findProductByID(productID) {
+        const { id } = await mongoIDValidator.validateAsync({ id: productID });
+        const product = await ProductModel.findById(id);
+        if(!product) throw createError.NotFound("محصولی یافت نشد");
+        return product;
     }
 }
 
